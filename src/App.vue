@@ -5,20 +5,34 @@
       <li>Cancel</li>
     </ul>
 
-    <ul class="header-button-right">
+
+    <!-- 조건문을 통해 업로드 확인 가능 -->
+    <ul v-if="now_tap_num==1" class="header-button-right" v-on:click="now_tap_num=2">
       <li>Next</li> 
+    </ul>
+    <ul v-if="now_tap_num==2" class="header-button-right" v-on:click="uploadComplete">
+      <li>Complete</li> 
     </ul>
 
     <img src="./assets/logo.png" class="logo">
   </div>
 
-  <Body />
+  <Body 
+    v-bind:postdata="postdata" 
+    v-bind:now_tap_num="now_tap_num"
+    v-bind:upload_image="upload_image"/>
 
-  <div class="sample-box">임시 박스</div>
+  <!--<div class="sample-box">임시 박스</div>-->
 
   <div class="footer">
     <ul class="footer-button-plus">
-      <li>+</li>
+      <input type="file" id="file" class="inputfile" v-on:change="upload">
+      <label for="file" class="input-plus">+</label>
+      <!--
+        1.다음 페이지로 이동
+        2.업로드한 이미지를 Body.vue 에 보여줘야함
+        jpg, png 이미지를 해쉬함수로 압축한 것  
+      -->
     </ul>
   </div>
 </div>
@@ -26,11 +40,56 @@
 
 <script>
 import Body from './components/Body.vue';
+import postdata from './mockdata/postdata.js';
 
 export default {
   name: 'app',
   components: {
     Body
+  },
+  data() {
+    return {
+      postdata : postdata,
+      //상태 변수 설정
+      now_tap_num : 0,
+      upload_image : ""
+    }
+  },
+  methods : {
+    upload(e){
+      /*
+        1.다음 페이지로 이동
+        2.업로드한 이미지를 Body.vue 에 보여줘야함
+        jpg, png 이미지를 해쉬함수로 압축한 것  
+      */
+      let file = e.target.files;
+      let reader = new FileReader();
+      reader.readAsDataURL(file[0]); //jpg, png 이미지를 해쉬함수로 문자열로 압축한 것 
+      reader.onload = e => {
+        /* eslint-disable */
+        console.log(e.target.result);
+        // 3. Body.vue에 그 이미지를 올려야 함
+        this.now_tap_num = 1;
+        this.upload_image = e.target.result;
+      }
+    },
+    uploadComplete(){
+
+      var upload_data = {
+              name: "NaHyunKee",
+              userImage: "https://placeimg.com/100/100/arch",
+              postImage: this.upload_image,
+              likes: 36,
+              date: 'Dec 16',
+              liked: false,
+              caption: "파이썬 너무 좋아!",
+              filter: "perpetua"
+      };
+      //1. 업로드한 이미지를 업로드한다. 서버에
+      this.postdata.unshift(upload_data);
+      //2. 메인 페이지로 돌아간다.
+      this.now_tap_num =  0;
+    }
   }
 }
 </script>
