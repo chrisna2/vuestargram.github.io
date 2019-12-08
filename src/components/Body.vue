@@ -2,6 +2,9 @@
     <div class="body">
         <!-- 첫번째 페이지 -->
         <div v-if="now_tap_num == 0">
+            <!-- 예시
+            <button v-on:click="$emit('shootNumber','50000')">버튼</button>
+            -->
             <Post v-for="post in postdata" :key='post' v-bind:post="post"/>
         </div>
 
@@ -21,7 +24,15 @@
         <div v-if="now_tap_num == 2">
             <div class="upload-image"  :style="`background-image:url(${upload_image})`"></div>
             <div class="write">
-                <textarea class="write-box">write!</textarea>
+                <!-- 오늘의 세로운 vue 문법 : 컴포넌트의 데이터를 상위 app위로 올려야 한다. -->
+                <textarea class="write-box" v-on:input="$emit('shootData', $event.target.value)">write!</textarea>
+                <!--
+                    $event :
+                     addEventListener
+                    $event.target.value : 인풋 테그에 입력된 벨류 값 
+                    [1] 수정 기능 추가
+                    [2] 삭제 기능 추가
+                -->
             </div>
         </div>
 

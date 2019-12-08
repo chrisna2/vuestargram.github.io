@@ -20,7 +20,8 @@
   <Body 
     v-bind:postdata="postdata" 
     v-bind:now_tap_num="now_tap_num"
-    v-bind:upload_image="upload_image"/>
+    v-bind:upload_image="upload_image"
+    v-on:shootData="wrote_post=$event"/>
 
   <!--<div class="sample-box">임시 박스</div>-->
 
@@ -52,7 +53,9 @@ export default {
       postdata : postdata,
       //상태 변수 설정
       now_tap_num : 0,
-      upload_image : ""
+      upload_image : "",
+      //custtom event!
+      wrote_post : ""  
     }
   },
   methods : {
@@ -82,7 +85,7 @@ export default {
               likes: 36,
               date: 'Dec 16',
               liked: false,
-              caption: "파이썬 너무 좋아!",
+              caption: this.wrote_post,
               filter: "perpetua"
       };
       //1. 업로드한 이미지를 업로드한다. 서버에
