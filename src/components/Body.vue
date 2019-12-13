@@ -5,7 +5,12 @@
             <!-- 예시
             <button v-on:click="$emit('shootNumber','50000')">버튼</button>
             -->
-            <Post v-for="post in postdata" :key='post' v-bind:post="post"/>
+            <Post 
+                v-for="post in postdata" 
+                :key='post' 
+                v-bind:post="post"
+                v-on:modifyinsta="modifyinsta"
+            />
         </div>
 
         <!-- 두번째 페이지 -->
@@ -51,6 +56,11 @@ export default {
         postdata : Array,
         now_tap_num : Number,
         upload_image : String
+    },
+        methods : {
+            modifyinsta(param){
+                this.$emit('modifyinsta', param);
+            }
     }
 }
 </script>

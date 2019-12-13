@@ -12,6 +12,7 @@
         <p>{{post.likes}} Likes</p>
         <p><strong>{{post.name}}</strong> {{post.caption}}</p>
         <p class="date"> {{post.caption}}</p>
+        <p class="modify-button" v-on:click="modifyinsta">수정</p>
     </div>
 </div>
 
@@ -21,7 +22,13 @@
 export default {
     name : 'Post',
     props : {
-        post : Object
+        post : Object,
+        now_tap_num : Number
+    },
+    methods : {
+        modifyinsta(){
+            this.$emit('modifyinsta', this.post);
+        }
     }
 }
 </script>
@@ -64,5 +71,10 @@ font-size: 14px;
 font-size: 11px;
 color: grey;
 margin-top: -8px;
+}
+.modify-button {
+    color: skyblue;
+    width: 50px;
+    cursor: pointer;
 }
 </style>
