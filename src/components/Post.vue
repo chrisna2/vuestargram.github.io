@@ -11,8 +11,9 @@
     <div class="post-content">
         <p>{{post.likes}} Likes</p>
         <p><strong>{{post.name}}</strong> {{post.caption}}</p>
-        <p class="date"> {{post.caption}}</p>
-        <p class="modify-button" v-on:click="modifyinsta">수정</p>
+        <p class="date"> {{post.date}}</p>
+        <span class="modify-button" v-on:click="modifyinsta">수정</span>&nbsp;
+        <span class="delete-button" v-on:click="deleteinsta">삭제</span>
     </div>
 </div>
 
@@ -28,6 +29,9 @@ export default {
     methods : {
         modifyinsta(){
             this.$emit('modifyinsta', this.post);
+        },
+        deleteinsta(){
+            this.$emit('deleteinsta', this.post);
         }
     }
 }
@@ -35,46 +39,51 @@ export default {
 
 <style>
 .post {
-width: 100%;
+    width: 100%;
 }
 .profile {
-background-image: url({{post.userImage}});
-width: 30px;
-height: 30px;
-background-size: 100%;
-border-radius: 50%;
-float: left;
+    background-image: url({{post.userImage}});
+    width: 30px;
+    height: 30px;
+    background-size: 100%;
+    border-radius: 50%;
+    float: left;
 }
 .profile-name {
-display: block;
-float: left;
-padding-left: 10px;
-padding-top: 7px;
-font-size: 14px;
+    display: block;
+    float: left;
+    padding-left: 10px;
+    padding-top: 7px;
+    font-size: 14px;
 }
 .post-header {
-height: 30px;
-padding: 10px;
+    height: 30px;
+    padding: 10px;
 }
 .post-body {
-background-image: url({{post.postImage}});
-height: 450px;
-background-position: center;
-background-size: cover;
+    background-image: url({{post.postImage}});
+    height: 450px;
+    background-position: center;
+    background-size: cover;
 }
 .post-content {
-padding-left: 15px;
-padding-right: 15px;
-font-size: 14px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 14px;
 }
 .date {
-font-size: 11px;
-color: grey;
-margin-top: -8px;
+    font-size: 11px;
+    color: grey;
+    margin-top: -8px;
 }
 .modify-button {
     color: skyblue;
     width: 50px;
     cursor: pointer;
+}
+.delete-button {
+    color: crimson;
+    width: 50px;
+    cursor: pointer; 
 }
 </style>

@@ -10,6 +10,7 @@
                 :key='post' 
                 v-bind:post="post"
                 v-on:modifyinsta="modifyinsta"
+                v-on:deleteinsta="deleteinsta"
             />
         </div>
 
@@ -60,7 +61,11 @@ export default {
         methods : {
             modifyinsta(param){
                 this.$emit('modifyinsta', param);
+            },
+            deleteinsta(param){
+                this.$emit('deleteinsta', param);
             }
+
     }
 }
 </script>

@@ -10,10 +10,10 @@
       <li>Next</li> 
     </ul>
     <ul v-if="now_tap_num==2 && uploadType=='upload'" class="header-button-right" v-on:click="uploadComplete">
-      <li>Complete</li> 
+      <li>Upload</li> 
     </ul>
     <ul v-if="now_tap_num==2 && uploadType=='modify'" class="header-button-right" v-on:click="modifyComplete">
-      <li>Complete</li> 
+      <li>Modify</li> 
     </ul>
 
     <img src="./assets/logo.png" class="logo">
@@ -26,7 +26,8 @@
     v-bind:upload_image="upload_image"
     v-bind:modify_data="modify_data"
     v-on:shootData="wrote_post=$event"
-    v-on:modifyinsta="modifyinsta" />
+    v-on:modifyinsta="modifyinsta" 
+    v-on:deleteinsta="deleteinsta"/>
 
   <!--<div class="sample-box">임시 박스</div>-->
 
@@ -155,6 +156,22 @@ export default {
       //2. 메인 페이지로 돌아간다.
       this.now_tap_num =  0;
       initData();
+    },
+    deleteinsta(param){
+      if(confirm("해당 게시물을 삭제 하시겠습니까?")){
+        //1. 수정하고자 하는 인덱스 값 찾기
+        var idx = this.postdata.findIndex(post => post.name == param.name);
+        //2. 해당 데이터를 날려 준다.
+        this.postdata.splice(idx, 1);
+        //3. 메인 페이지로 돌아간다.
+        this.now_tap_num =  0;
+        initData()
+      }
+      else{
+        //1. 메인 페이지로 돌아간다.
+        this.now_tap_num =  0;
+        initData();
+      }
     },
     initData(){
       this.upload_image = "";
