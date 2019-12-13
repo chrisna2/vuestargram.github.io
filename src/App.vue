@@ -136,14 +136,14 @@ export default {
     },
     modifyComplete(){
       var tmp_modify_data = {
-              name: this.modify_data.name,
-              userImage: this.modify_data.userImage,
-              postImage: this.upload_image,
-              likes: this.modify_data.likes,
-              date: this.modify_data.date,
-              liked: this.modify_data.liked,
-              caption: this.wrote_post,
-              filter: this.modify_data.filter
+              name : this.modify_data.name,
+              userImage : this.modify_data.userImage,
+              postImage : this.upload_image,
+              likes : this.modify_data.likes,
+              date : this.modify_data.date,
+              liked : this.modify_data.liked,
+              caption : this.wrote_post,
+              filter : this.modify_data.filter
       };
       //1. 수정하고자 하는 인덱스 값 찾기
       var idx = this.postdata.findIndex(post =>
@@ -173,9 +173,11 @@ export default {
         initData();
       }
     },
+    //데이터 초기화
     initData(){
       this.upload_image = "";
       this.wrote_post = "";
+      this.uploadType = "";
     }
   }
 }
