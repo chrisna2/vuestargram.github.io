@@ -18,6 +18,11 @@
 
     <img src="./assets/logo.png" class="logo">
   </div>
+  
+  <h4>Vuex에 저장된 이름1 : {{$store.state.name}} / {{$store.state.age}}</h4>
+  <h4>Vuex에 저장된 이름2 : {{$store.getters.getName}} / {{$store.getters.getAge}}</h4>
+  <h4>Vuex에 나이변경하기 : <input type="text" v-model="ageText"><button v-on:click="$store.commit('setAge', ageText)">나이바꾸기</button></h4>
+  <h4>Vuex에 이름변경하기 : <input type="text" v-model="nameText"><button v-on:click="$store.commit('setName', nameText)">이름바꾸기</button></h4>
 
   <Body 
     v-bind:postdata="postdata" 
@@ -50,17 +55,16 @@
         2.업로드한 이미지를 Body.vue 에 보여줘야함
         jpg, png 이미지를 해쉬함수로 압축한 것  
 
-        백엔드 서버 구축 연결
+        [1] 백엔드 서버 구축 연결
 
         웹서버 : 뭔가 요청하면 갖다주는 프로그램
         누가 naver.com/index.html 요청하면 그에
         걸맞는 html css js를 갖다주는 것 
 
         vue는 Ajax 호출을 한다
+        yarn add axios
         1. get call
         2. post call
-
-
 
       -->
     </ul>
@@ -203,7 +207,18 @@ export default {
       .then(결과 => {
           console.log(결과.data);
           this.postdata.push(결과.data);
+      });
+
+      /*post call & try~catch
+      axios.post("경로")
+        .then(result => {
+
       })
+        .catch(err =>{
+        
+      });
+      */
+
     }
   },
   mounted(){
