@@ -16,19 +16,16 @@
 
         <!-- 두번째 페이지 -->
         <div v-if="now_tap_num == 1">
-            <div class="upload-image" :style="`background-image:url(${upload_image})`"></div>
+            <div :class="['upload-image', select_filter]" :style="`background-image:url(${upload_image})`"></div>
             <div class="filters">
-                <div class="filter-1"></div>
-                <div class="filter-1"></div>
-                <div class="filter-1"></div>
-                <div class="filter-1"></div>
-                <div class="filter-1"></div>
+                <!-- v-for :key v-bind 가 삼위일체 -->
+                <FilterBox v-for="fliter in filter_list" :key='fliter' v-bind:upload_image="upload_image" v-bind:fliter="fliter"/>
             </div>
         </div>
 
         <!-- 세번째 페이지 -->
         <div v-if="now_tap_num == 2">
-            <div class="upload-image"  :style="`background-image:url(${upload_image})`"></div>
+            <div v-bind:class="`upload-image ${select_filter}`"  :style="`background-image:url(${upload_image})`"></div>
             <div class="write">
                 <!-- 오늘의 세로운 vue 문법 : 컴포넌트의 데이터를 상위 app위로 올려야 한다. -->
                 <textarea class="write-box" v-on:input="$emit('shootData', $event.target.value)">write!</textarea>
@@ -47,16 +44,19 @@
 
 <script>
 import Post from './Post.vue';
+import FilterBox from './FilterBox.vue'
 
 export default {
     name: 'Body',
     components: {
-        Post
+        Post, FilterBox
     },
     props : {
         postdata : Array,
         now_tap_num : Number,
-        upload_image : String
+        upload_image : String,
+        filter_list : Array,
+        select_filter : String
     },
         methods : {
             modifyinsta(param){

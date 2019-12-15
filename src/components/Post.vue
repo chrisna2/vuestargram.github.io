@@ -2,11 +2,11 @@
   <div class="post">
     <div class="post-header">
         <!-- 속성안에 데이터를 받기 위해서는 " : " 작은 따옴표와 큰 따옴표의 차이가 크게 작용한다.-->
-        <div class="profile" :style="'background-image: url('+post.userImage+')'" ></div>
+        <div class='profile' :style="'background-image: url('+post.userImage+')'" ></div>
         <span class="profile-name">{{post.name}}</span>
     </div>
     <!-- 속성안에 데이터를 받기 위해서는 " : " 작은 따옴표가 아니다 ` 이 키를 사용한다-->
-    <div class="post-body" :style="`background-image: url(${post.postImage})`"></div>
+    <div :class="['post-body', post.filter]" :style="`background-image: url(${post.postImage})`"></div>
 
     <div class="post-content">
         <p>{{post.likes}} Likes</p>

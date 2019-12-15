@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="header">
-    <ul class="header-button-left">
+    <ul class="header-button-left" v-on:click="initData">
       <li>Cancel</li>
     </ul>
 
@@ -25,6 +25,8 @@
     v-bind:uploadType="uploadType"
     v-bind:upload_image="upload_image"
     v-bind:modify_data="modify_data"
+    v-bind:filter_list="filter_list"
+    v-bind:select_filter="select_filter"
     v-on:shootData="wrote_post=$event"
     v-on:modifyinsta="modifyinsta" 
     v-on:deleteinsta="deleteinsta"/>
@@ -54,6 +56,7 @@
 <script>
 import Body from './components/Body.vue';
 import postdata from './mockdata/postdata.js';
+import EventBus from './EventBus.js';
 
 export default {
   name: 'app',
@@ -69,8 +72,9 @@ export default {
       upload_image : "",
       //custtom event!
       wrote_post : "",
-      modify_data : {}
-
+      modify_data : {},
+      filter_list : ["normal", "clarendon", "gingham", "moon", "lark", "reyes", "juno", "slumber", "aden", "perpetua", "mayfair", "rise", "hudson", "valencia", "xpro2", "willow", "lofi", "inkwell", "nashville"],
+      select_filter : ""
     }
   },
   methods : {
@@ -102,13 +106,12 @@ export default {
               date: 'Dec 16',
               liked: false,
               caption: this.wrote_post,
-              filter: "perpetua"
+              filter: this.select_filter
       };
       //1. 업로드한 이미지를 업로드한다. 서버에
       this.postdata.unshift(upload_data);
       //2. 메인 페이지로 돌아간다.
-      this.now_tap_num =  0;
-      initData();
+      this.initData();
     },
     modifyinsta(param){
       this.modify_data = param
@@ -143,7 +146,7 @@ export default {
               date : this.modify_data.date,
               liked : this.modify_data.liked,
               caption : this.wrote_post,
-              filter : this.modify_data.filter
+              filter : this.select_filter
       };
       //1. 수정하고자 하는 인덱스 값 찾기
       var idx = this.postdata.findIndex(post =>
@@ -154,8 +157,7 @@ export default {
       //alert(JSON.stringify(modify));
 
       //2. 메인 페이지로 돌아간다.
-      this.now_tap_num =  0;
-      initData();
+      this.initData();
     },
     deleteinsta(param){
       if(confirm("해당 게시물을 삭제 하시겠습니까?")){
@@ -164,21 +166,28 @@ export default {
         //2. 해당 데이터를 날려 준다.
         this.postdata.splice(idx, 1);
         //3. 메인 페이지로 돌아간다.
-        this.now_tap_num =  0;
-        initData()
+        this.initData()
       }
       else{
         //1. 메인 페이지로 돌아간다.
-        this.now_tap_num =  0;
-        initData();
+        this.initData();
       }
     },
     //데이터 초기화
     initData(){
+      this.now_tap_num =  0;
       this.upload_image = "";
       this.wrote_post = "";
       this.uploadType = "";
+      this.select_filter = "";
     }
+  },
+  mounted(){
+    EventBus.$on('select-filter', (fliter) => {
+        /* eslint-disable */
+        console.log(fliter);
+        this.select_filter = fliter;
+    });
   }
 }
 </script>
