@@ -38,6 +38,8 @@
       <div v-if="now_tap_num==0">
         <input type="file" id="file" class="inputfile" v-on:change="upload">
         <label for="file" class="input-plus">➕</label>
+        <hr>
+        <label class="input-plus" v-on:click="moreShow">더보기</label>
       </div>
       <div v-if="now_tap_num==1">
         <input type="file" id="file" class="inputfile" v-on:change="modify">
@@ -47,6 +49,19 @@
         1.다음 페이지로 이동
         2.업로드한 이미지를 Body.vue 에 보여줘야함
         jpg, png 이미지를 해쉬함수로 압축한 것  
+
+        백엔드 서버 구축 연결
+
+        웹서버 : 뭔가 요청하면 갖다주는 프로그램
+        누가 naver.com/index.html 요청하면 그에
+        걸맞는 html css js를 갖다주는 것 
+
+        vue는 Ajax 호출을 한다
+        1. get call
+        2. post call
+
+
+
       -->
     </ul>
   </div>
@@ -57,6 +72,8 @@
 import Body from './components/Body.vue';
 import postdata from './mockdata/postdata.js';
 import EventBus from './EventBus.js';
+//Axios 
+import axios from 'axios';
 
 export default {
   name: 'app',
@@ -180,6 +197,13 @@ export default {
       this.wrote_post = "";
       this.uploadType = "";
       this.select_filter = "";
+    },
+    moreShow(){
+      axios.get('https://yogoho210.github.io/postdata2.json')
+      .then(결과 => {
+          console.log(결과.data);
+          this.postdata.push(결과.data);
+      })
     }
   },
   mounted(){
