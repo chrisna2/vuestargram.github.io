@@ -66,6 +66,12 @@
         1. get call
         2. post call
 
+        [2] vuex => store.js
+
+        [3] PWA -> vue add @vue/pwa
+          1. yarn build
+          2. manifest.json , serviceworker.js
+
       -->
     </ul>
   </div>
