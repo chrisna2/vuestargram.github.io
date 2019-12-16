@@ -32,7 +32,7 @@ export let store = new Vuex.Store({
       state.name = param;
     }
   },
-  //[리액트] => redux 
+  //[리액트] => redux 와 동일
   actions : {
     //1. ajax 요청을 통해 mytations를 해야 되는 경우
     changeName(context){

@@ -1,8 +1,11 @@
 <template>
 <div>
   <div class="header">
-    <ul class="header-button-left" v-on:click="initData">
+    <ul class="header-button-left" v-on:click="initData"  v-if="now_tap_num==1 || now_tap_num==2" >
       <li>Cancel</li>
+    </ul>
+    <ul class="header-button-left" v-on:click="open_modal=true"  v-if="now_tap_num==0" >
+      <li>User</li>
     </ul>
 
     <!-- 조건문을 통해 업로드 확인 가능 -->
@@ -18,11 +21,21 @@
 
     <img src="./assets/logo.png" class="logo">
   </div>
-  
-  <h4>Vuex에 저장된 이름1 : {{$store.state.name}} / {{$store.state.age}}</h4>
-  <h4>Vuex에 저장된 이름2 : {{$store.getters.getName}} / {{$store.getters.getAge}}</h4>
-  <h4>Vuex에 나이변경하기 : <input type="text" v-model="ageText"><button v-on:click="$store.commit('setAge', ageText)">나이바꾸기</button></h4>
-  <h4>Vuex에 이름변경하기 : <input type="text" v-model="nameText"><button v-on:click="$store.commit('setName', nameText)">이름바꾸기</button></h4>
+
+  <!-- 모달창 -->
+  <div v-if="open_modal" class="modal">
+    <hr>
+    <ul>
+      <!-- <li>이름1 : {{$store.state.name}} / {{$store.state.age}}</li> -->
+      <li class="modal-list">유저정보 : {{$store.getters.getName}} / {{$store.getters.getAge}}</li>
+      <li class="modal-list">나이변경 : <input class="inputModal" type="text" v-model="ageText"><span class="modal-button" v-on:click="$store.commit('setAge', ageText)">변경</span></li>
+      <li class="modal-list">이름변경 : <input class="inputModal" type="text" v-model="nameText"><span class="modal-button" v-on:click="$store.commit('setName', nameText)">변경</span></li>
+    </ul>
+    <hr>
+    <ul v-on:click="open_modal=false" class="modal-button" style="float:right">
+      <li>닫기</li>
+    </ul>
+  </div>
 
   <Body 
     v-bind:postdata="postdata" 
@@ -36,7 +49,7 @@
     v-on:modifyinsta="modifyinsta" 
     v-on:deleteinsta="deleteinsta"/>
 
-  <!--<div class="sample-box">임시 박스</div>-->
+  <!-- <div class="sample-box">임시 박스</div> -->
 
   <div class="footer">
     <ul class="footer-button-plus">
@@ -67,11 +80,9 @@
         2. post call
 
         [2] vuex => store.js
-
         [3] PWA -> vue add @vue/pwa
           1. yarn build
           2. manifest.json , serviceworker.js
-
       -->
     </ul>
   </div>
@@ -100,8 +111,12 @@ export default {
       //custtom event!
       wrote_post : "",
       modify_data : {},
-      filter_list : ["normal", "clarendon", "gingham", "moon", "lark", "reyes", "juno", "slumber", "aden", "perpetua", "mayfair", "rise", "hudson", "valencia", "xpro2", "willow", "lofi", "inkwell", "nashville"],
-      select_filter : ""
+      filter_list : ["normal", "clarendon", "gingham", "moon", "lark", 
+                     "reyes", "juno", "slumber", "aden", "perpetua", 
+                     "mayfair", "rise", "hudson", "valencia", "xpro2", 
+                     "willow", "lofi", "inkwell", "nashville"],
+      select_filter : "",
+      open_modal : false
     }
   },
   methods : {
@@ -121,12 +136,12 @@ export default {
         this.now_tap_num = 1;
         this.upload_image = e.target.result;
         this.uploadType = "upload";
+        this.open_modal = false;
       }
     },
     uploadComplete(){
-
       var upload_data = {
-              name: "NaHyunKee",
+              name: this.$store.getters.getName,
               userImage: "https://placeimg.com/100/100/arch",
               postImage: this.upload_image,
               likes: 36,
@@ -145,6 +160,7 @@ export default {
       this.upload_image = param.postImage;
       this.now_tap_num = 1;
       this.uploadType = "modify";
+      this.open_modal = false;
     },
     //사진 중간에 바꾸기
     modify(e){
@@ -244,6 +260,21 @@ body {
 ul{
   padding: 5px;
   list-style-type: none;
+}
+.modal {
+  padding : 10px;
+}
+.modal-list {
+  margin: 5px;
+}
+.modal-button {
+  color: skyblue;
+  cursor: pointer;
+  margin: 5px;
+}
+.inputModal {
+  width: 50px;
+  margin-left: 5px;
 }
 .logo {
   width:22px;
