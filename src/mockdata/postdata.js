@@ -1,5 +1,6 @@
 export default [
-    {
+    { 
+      id: 3,
       name: "Kimhyukmin",
       userImage: "https://placeimg.com/100/100/arch",
       postImage: "https://placeimg.com/640/480/arch",
@@ -10,6 +11,7 @@ export default [
       filter: "perpetua"
     },
     {
+      id: 2,
       name: "Dangdud",
       userImage: "https://placeimg.com/200/200/arch",
       postImage: "https://placeimg.com/640/480/people",
@@ -20,6 +22,7 @@ export default [
       filter: "clarendon"
     },
     {
+      id: 1,
       name: "Mungmung",
       userImage: "https://placeimg.com/100/100/animals",
       postImage: "https://placeimg.com/640/480/animals",
@@ -29,4 +32,4 @@ export default [
       caption: "고양이 멍뭉이",
       filter: "lofi"
     }
-    ]
+  ]

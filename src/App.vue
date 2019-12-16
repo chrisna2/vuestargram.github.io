@@ -91,7 +91,6 @@
 
 <script>
 import Body from './components/Body.vue';
-import postdata from './mockdata/postdata.js';
 import EventBus from './EventBus.js';
 //Axios 
 import axios from 'axios';
@@ -103,7 +102,7 @@ export default {
   },
   data() {
     return {
-      postdata : postdata,
+      postdata : this.$store.getters.getPostData,
       //상태 변수 설정
       now_tap_num : 0,
       uploadType : "",
@@ -111,10 +110,7 @@ export default {
       //custtom event!
       wrote_post : "",
       modify_data : {},
-      filter_list : ["normal", "clarendon", "gingham", "moon", "lark", 
-                     "reyes", "juno", "slumber", "aden", "perpetua", 
-                     "mayfair", "rise", "hudson", "valencia", "xpro2", 
-                     "willow", "lofi", "inkwell", "nashville"],
+      filter_list : this.$store.getters.getFilters,
       select_filter : "",
       open_modal : false
     }
@@ -141,6 +137,7 @@ export default {
     },
     uploadComplete(){
       var upload_data = {
+              id : this.postdata.length + 1,
               name: this.$store.getters.getName,
               userImage: "https://placeimg.com/100/100/arch",
               postImage: this.upload_image,
@@ -182,6 +179,7 @@ export default {
     },
     modifyComplete(){
       var tmp_modify_data = {
+              id : this.modify_data.id,
               name : this.modify_data.name,
               userImage : this.modify_data.userImage,
               postImage : this.upload_image,
@@ -205,7 +203,7 @@ export default {
     deleteinsta(param){
       if(confirm("해당 게시물을 삭제 하시겠습니까?")){
         //1. 수정하고자 하는 인덱스 값 찾기
-        var idx = this.postdata.findIndex(post => post.name == param.name);
+        var idx = this.postdata.findIndex(post => post.id == param.id);
         //2. 해당 데이터를 날려 준다.
         this.postdata.splice(idx, 1);
         //3. 메인 페이지로 돌아간다.
@@ -225,12 +223,16 @@ export default {
       this.select_filter = "";
     },
     moreShow(){
-      axios.get('https://yogoho210.github.io/postdata2.json')
-      .then(결과 => {
-          console.log(결과.data);
-          this.postdata.push(결과.data);
+      //ajax 호출로 파이어 베이스 데이터 가져오기는 성공했다.
+      axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json')
+      .then(result => {
+          console.log("@데이터 형태 : "+JSON.stringify(result.data));
+          //안에 데이터가 Array 이기 때문에 여기선 foreach를 사용한다.
+          result.data.forEach(element => {
+            //각각 배열에 입력처리
+            this.postdata.push(element);  
+          });
       });
-
       /*post call & try~catch
       axios.post("경로")
         .then(result => {
