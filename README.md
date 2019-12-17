@@ -2,6 +2,8 @@
 뷰로 만드는 인스타 그램 뷰스타그램
 * vue.js
 * firebase
+* pwa
+
 
 ## Project setup
 ```
