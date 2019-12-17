@@ -79,7 +79,8 @@ export default {
 .modify-button {
     color: skyblue;
     width: 50px;
-    cursor: pointer;
+    cursor: pointer
+    ;
 }
 .delete-button {
     color: crimson;

@@ -216,14 +216,23 @@ export default {
             });
     },
     deleteinsta(param){
-
       if(confirm("해당 게시물을 삭제 하시겠습니까?")){
         //1. 수정하고자 하는 인덱스 값 찾기
         var idx = this.postdata.findIndex(post => post.id == param.id);
         //2. 해당 데이터를 날려 준다.
-        this.postdata.splice(idx, 1);
-        //3. 메인 페이지로 돌아간다.
-        this.initData()
+        //this.postdata.splice(idx, 1); 
+        //문제는 파이어 베이스에서 삭제를 호출할 경우 데이터는 지워지더라도 그 자리에는 null이라는 값이 남는다.
+        //그래서 데이터를 호출 할때 null인 값을 제외하고 호출 해 주어야 한다. store.js 확인
+        axios.delete('https://vuestargram-39e5c.firebaseio.com/postdata/'+param.id+'.json')
+             .then(result => {
+               if(result.status == 200){
+                //3. 메인 페이지로 돌아간다.
+                this.initData();
+               }
+             })
+             .catch(err => {
+               console.log(err);
+             })
       }
       else{
         //1. 메인 페이지로 돌아간다.
