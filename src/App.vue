@@ -153,12 +153,17 @@ export default {
       //1. 업로드한 이미지를 업로드한다. 서버에
       //this.postdata.unshift(upload_data); 
       // 입력 처리 된다.
-      const response = axios.put('https://vuestargram-39e5c.firebaseio.com/postdata/'+nextId+'.json', upload_data);
-      //console.log(response)
-      console.log(response.data);
-
-      //2. 메인 페이지로 돌아간다.
-      this.initData();
+      axios.put('https://vuestargram-39e5c.firebaseio.com/postdata/'+nextId+'.json', upload_data)
+           .then(result => {
+              console.log(result);
+              if(result.status == 200){
+                //2. 메인 페이지로 돌아간다.
+                this.initData();
+              }
+           })
+           .catch(err => {
+              console.log(err);
+           });
     },
     modifyinsta(param){
       this.modify_data = param
@@ -200,10 +205,15 @@ export default {
       // 2. 업로드한 이미지를 업로드한다. 서버에
       // this.postdata.unshift(upload_data); 
       // 입력 처리 된다.
-      const response = axios.put('https://vuestargram-39e5c.firebaseio.com/postdata/'+this.modify_data.id+'.json', tmp_modify_data);
-
-      //2. 메인 페이지로 돌아간다.
-      this.initData();
+      axios.put('https://vuestargram-39e5c.firebaseio.com/postdata/'+this.modify_data.id+'.json', tmp_modify_data)
+           .then(result => {
+              console.log(result);
+              //2. 메인 페이지로 돌아간다.
+              this.initData();
+            })
+           .catch(err => {
+              console.log(err);
+            });
     },
     deleteinsta(param){
 
@@ -220,13 +230,10 @@ export default {
         this.initData();
       }
     },
-    //데이터 초기화
+    //데이터 초기화 및 리프레쉬 : store.js 문제 였음
     initData(){
-      this.now_tap_num =  0;
-      this.upload_image = "";
-      this.wrote_post = "";
-      this.uploadType = "";
-      this.select_filter = "";
+      //모든 데이터 초기화!
+      Object.assign(this.$data, this.$options.data.call(this));
     },
     moreShow(){
       //ajax 호출로 파이어 베이스 데이터 가져오기는 성공했다.
@@ -255,6 +262,11 @@ export default {
         this.select_filter = fliter;
     });
   }
+  // 페이지 첫로드시 데이터 초기화 시킬 함수 -> 페이지 첫로드시 데이터 초기값을 설정해주고 싶을 때
+  // created(){
+  //   this.postdata = this.$store.getters.getPostData;
+  //   this.filter_list = this.$store.getters.getFilters;
+  // }
 }
 </script>
 

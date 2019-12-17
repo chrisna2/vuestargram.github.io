@@ -29,6 +29,8 @@ export let store = new Vuex.Store({
       return state.age;
     },
     getPostData(state){
+      //초기화 해 줘야 됨
+      state.postdata = [];
       //ajax 호출로 파이어 베이스 데이터 가져오기는 성공했다. 문제는 어떻게 수정하는 가이다.
       axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json')
            .then(result => {
@@ -37,9 +39,10 @@ export let store = new Vuex.Store({
                     .forEach(post => {
                       state.postdata.push(post);
                     });
+              /* eslint-disable */
+              //업데이트, 인서트 직후 바로 호출하게 되면 결과가 []로 나온다. 즉 타이밍이 안맞는 거다. 아닌데?
+              //console.log(JSON.stringify(state.postdata))
            });
-      /* eslint-disable */
-      //console.log(JSON.stringify(state.postdata))
       return state.postdata;
     },
     getFilters(state){
