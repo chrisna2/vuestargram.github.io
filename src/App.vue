@@ -136,8 +136,11 @@ export default {
       }
     },
     uploadComplete(){
+      //다음 아이디 설정
+      var nextId = this.postdata[0].id + 1;
+      //업로드 데이터 설정
       var upload_data = {
-              id : this.postdata.length + 1,
+              id : nextId,
               name: this.$store.getters.getName,
               userImage: "https://placeimg.com/100/100/arch",
               postImage: this.upload_image,
@@ -148,7 +151,12 @@ export default {
               filter: this.select_filter
       };
       //1. 업로드한 이미지를 업로드한다. 서버에
-      this.postdata.unshift(upload_data);
+      //this.postdata.unshift(upload_data); 
+      // 입력 처리 된다.
+      const response = axios.put('https://vuestargram-39e5c.firebaseio.com/postdata/'+nextId+'.json', upload_data);
+      //console.log(response)
+      console.log(response.data);
+
       //2. 메인 페이지로 돌아간다.
       this.initData();
     },
@@ -189,18 +197,16 @@ export default {
               caption : this.wrote_post,
               filter : this.select_filter
       };
-      //1. 수정하고자 하는 인덱스 값 찾기
-      var idx = this.postdata.findIndex(post =>
-        post.name == tmp_modify_data.name
-      );
-      //2. 수정하려는 데이터 update
-      this.postdata[idx] = tmp_modify_data;
-      //alert(JSON.stringify(modify));
+      // 2. 업로드한 이미지를 업로드한다. 서버에
+      // this.postdata.unshift(upload_data); 
+      // 입력 처리 된다.
+      const response = axios.put('https://vuestargram-39e5c.firebaseio.com/postdata/'+this.modify_data.id+'.json', tmp_modify_data);
 
       //2. 메인 페이지로 돌아간다.
       this.initData();
     },
     deleteinsta(param){
+
       if(confirm("해당 게시물을 삭제 하시겠습니까?")){
         //1. 수정하고자 하는 인덱스 값 찾기
         var idx = this.postdata.findIndex(post => post.id == param.id);
@@ -236,13 +242,10 @@ export default {
       /*post call & try~catch
       axios.post("경로")
         .then(result => {
-
       })
         .catch(err =>{
-        
       });
       */
-
     }
   },
   mounted(){
