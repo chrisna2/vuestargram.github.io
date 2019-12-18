@@ -1,5 +1,8 @@
 {
   "rules": {
+    "postdata" : {
+      ".indexOn": ["id", "date", "likes"]
+    },
     ".read": "true",
     ".write": "true"
   }

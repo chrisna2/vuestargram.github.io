@@ -103,11 +103,11 @@ export default {
   data() {
     return {
       postdata : this.$store.getters.getPostData,
-      //상태 변수 설정
+      // 상태 변수 설정
       now_tap_num : 0,
       uploadType : "",
       upload_image : "",
-      //custtom event!
+      // custtom event!
       wrote_post : "",
       modify_data : {},
       filter_list : this.$store.getters.getFilters,
