@@ -4,11 +4,11 @@
     <ul class="header-button-left" v-on:click="initData"  v-if="now_tap_num==1 || now_tap_num==2" >
       <li>Cancel</li>
     </ul>
-    <ul class="header-button-left" v-on:click="open_modal=true"  v-if="now_tap_num==0" >
-      <li>User</li>
-    </ul>
 
     <!-- 조건문을 통해 업로드 확인 가능 -->
+    <ul class="header-button-right" v-on:click="fnopenmodal"  v-if="now_tap_num==0" >
+      <li>User</li>
+    </ul>
     <ul v-if="now_tap_num==1" class="header-button-right" v-on:click="now_tap_num=2">
       <li>Next</li> 
     </ul>
@@ -25,16 +25,16 @@
   <!-- 모달창 -->
   <div v-if="open_modal" class="modal">
     <hr>
-    <ul>
-      <!-- <li>이름1 : {{$store.state.name}} / {{$store.state.age}}</li> -->
-      <li class="modal-list">유저정보 : {{$store.getters.getName}} / {{$store.getters.getAge}}</li>
-      <li class="modal-list">나이변경 : <input class="inputModal" type="text" v-model="ageText"><span class="modal-button" v-on:click="$store.commit('setAge', ageText)">변경</span></li>
-      <li class="modal-list">이름변경 : <input class="inputModal" type="text" v-model="nameText"><span class="modal-button" v-on:click="$store.commit('setName', nameText)">변경</span></li>
-    </ul>
+      <div class="post-header">
+        <!-- 속성안에 데이터를 받기 위해서는 " : " 작은 따옴표와 큰 따옴표의 차이가 크게 작용한다.-->
+        <div class='profile' style="background-image: url(https://cdn.clien.net/web/api/file/F01/3045198/f7af4dcda39945eeace.PNG);width:80px;height:80px;" ></div>
+        <span class="profile-name">&nbsp;&nbsp;<b><h3>{{$store.getters.getName}}</h3></b></span>
+      </div>
+      <ul>
+        <li class="modal-list">사진변경 : <input type="file" id="usrfile" class="inputfile" v-on:change="usrmodify"><label class="input-plus" for="usrfile">♻️</label></li>
+        <li class="modal-list">이름변경 : <input class="inputModal" type="text" v-model="nameText"><span class="modal-button" v-on:click="$store.commit('setName', nameText)">변경</span></li>
+      </ul>
     <hr>
-    <ul v-on:click="open_modal=false" class="modal-button" style="float:right">
-      <li>닫기</li>
-    </ul>
   </div>
 
   <Body 
@@ -272,6 +272,15 @@ export default {
         .catch(err =>{
       });
       */
+    },
+    fnopenmodal(){
+      if(this.open_modal == false){
+        this.open_modal = true;
+      }
+      else{
+        this.open_modal = false;
+      }
+      return this.open_modal;
     }
   },
   mounted(){
@@ -302,6 +311,7 @@ ul{
 }
 .modal-list {
   margin: 5px;
+  float: center;
 }
 .modal-button {
   color: skyblue;
