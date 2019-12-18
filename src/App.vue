@@ -245,16 +245,26 @@ export default {
       Object.assign(this.$data, this.$options.data.call(this));
     },
     moreShow(){
+      //이전 아이디 설정
+      var preId = this.postdata[this.postdata.length-1].id - 1;
+
+      if(preId < 0){
+        alert("가장 마지막의 포스트입니다.")
+      }
+
       //ajax 호출로 파이어 베이스 데이터 가져오기는 성공했다.
-      axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json')
-      .then(result => {
-          console.log("@데이터 형태 : "+JSON.stringify(result.data));
-          //안에 데이터가 Array 이기 때문에 여기선 foreach를 사용한다.
-          result.data.forEach(element => {
-            //각각 배열에 입력처리
-            this.postdata.push(element);  
-          });
-      });
+      axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json?orderBy=%22id%22&endAt='+preId+'&limitToLast=2&print=pretty')
+           .then(result => {
+                console.log("@데이터 형태 : "+JSON.stringify(result.data));
+                Object.values(result.data)
+                      .reverse()
+                      .forEach(post => {
+                        if(post != null){
+                          //각각 배열에 입력처리
+                          this.postdata.push(post);  
+                        }
+                      });
+            });
       /*post call & try~catch
       axios.post("경로")
         .then(result => {

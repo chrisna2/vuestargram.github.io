@@ -37,15 +37,15 @@ export let store = new Vuex.Store({
       //역의 값을 얻으려면 limitToLast 앞에서 순서대로 값을 얻으려면 limitToStart 
       axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json?orderBy="id"&limitToLast=3')
            .then(result => {                 
-             //타이밍이 안맞는 이유는 다음과 같다. put처리 이후 콜백에서 처리를 안해 주어서 그렇다
-             //axios호출 이후 반드시 후에 들어오는 로직은 then에서 함수 처리 해주어야 한다. 
-             //사실 메서드 체인으로 처리한것 모든 것이 다 그렇다.
-             //console.log(JSON.stringify(state.postdata))
+            //타이밍이 안맞는 이유는 다음과 같다. put처리 이후 콜백에서 처리를 안해 주어서 그렇다
+            //axios호출 이후 반드시 후에 들어오는 로직은 then에서 함수 처리 해주어야 한다. 
+            //사실 메서드 체인으로 처리한것 모든 것이 다 그렇다.
+            //console.log(JSON.stringify(state.postdata))
       
-              // 지난 2일간 파이어베이스 함수를 사용해서 쿼리를 날려 보려고 했으나 실패 했다. 헛지랄이었다. 더 쉬운 방법이 있었다.
-              // [문제 해결1] ?orderBy="$key"&limitToLast=3 경로를 추가하면 된다! 이렇게 하면 키값이 인덱스로 잡혀 정렬된다
-              // [문제 해결2] ?orderBy="id"&limitToLast=3 경로를 추가하면 된다! 이런식으로 밸류 값을 통해 정렬도 가능하다!
-              // (단 반드시 해당 밸류는 아래처럼 파이어 베이스에서 인덱스로 등록해야 된다.)
+            // 지난 2일간 파이어베이스 함수를 사용해서 쿼리를 날려 보려고 했으나 실패 했다. 헛지랄이었다. 더 쉬운 방법이 있었다.
+            // [문제 해결1] ?orderBy="$key"&limitToLast=3 경로를 추가하면 된다! 이렇게 하면 키값이 인덱스로 잡혀 정렬된다
+            // [문제 해결2] ?orderBy="id"&limitToLast=3 경로를 추가하면 된다! 이런식으로 밸류 값을 통해 정렬도 가능하다!
+            // (단 반드시 해당 밸류는 아래처럼 파이어 베이스에서 인덱스로 등록해야 된다.)
               
               /*
               {
@@ -59,12 +59,12 @@ export let store = new Vuex.Store({
                 }
               */
                 
-              // [추가] 이런식으로 값을 제한으로 받기 시작하면 Array 가 아닌 json object 형태의 값으로 들어오게된다. 
-              // 나는 키값은 필요 없으니 자바스크립트에서 제공하는 함수 Object.values(Object)로 밸류값을 배열 값을 출력 하도록 하자. 
-              // 반대는 Object.keys(Object), 키값을 배열로 나열해 준다.
+            /*  */// [추가] 이런식으로 값을 제한으로 받기 시작하면 Array 가 아닌 json object 형태의 값으로 들어오게된다. 
+            // 나는 키값은 필요 없으니 자바스크립트에서 제공하는 함수 Object.values(Object)로 밸류값을 배열 값을 출력 하도록 하자. 
+            // 반대는 Object.keys(Object), 키값을 배열로 나열해 준다.
 
-              /* eslint-disable */
-              console.log(JSON.stringify(result.data));
+            /* eslint-disable */
+            //console.log(JSON.stringify(result.data));
               /* 
               //이전 버전, 이렇게 데이터를 출력하면 JsonArray형태로 출력되게 된다.
               result.data
