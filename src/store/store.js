@@ -4,23 +4,13 @@
         여기다가 모든 데이터를 넣을 것이다 앞으로!
         이곳은 신성한곳 원본데이터를 직접 수정해서는 안된다!
 */
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 //Axios 
 import axios from 'axios';
-//[1] yarn add firebase [2] import
-// Firebase App (the core Firebase SDK) is always required and
-// must be listed before other Firebase SDKs
-import firebase from "firebase/app";
 
 // Set the configuration for your app
 // TODO: Replace with your project's config object
-var config = {
-  apiKey: "AIzaSyCf365OtDG0sKCcpcNUBLa3EfQMO4CAI44",
-  databaseURL: "https://vuestargram-39e5c.firebaseio.com"
-}
-firebase.initializeApp(config);
-
 Vue.use(Vuex);
 
 export let store = new Vuex.Store({
