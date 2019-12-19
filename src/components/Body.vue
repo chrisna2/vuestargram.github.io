@@ -4,10 +4,11 @@
         <div v-if="now_tap_num == 0">
             <!-- 예시
             <button v-on:click="$emit('shootNumber','50000')">버튼</button>
+            v-for="post in postdata" :key="post" 보다 아래 처럼 사용할 것을 권한다.
+            v-for="(post, i) in postdata" :key="i"
             -->
             <Post 
-                v-for="post in postdata" 
-                :key='post' 
+                v-for="(post, i) in postdata" :key="i" 
                 v-bind:post="post"
                 v-on:modifyinsta="modifyinsta"
                 v-on:deleteinsta="deleteinsta"

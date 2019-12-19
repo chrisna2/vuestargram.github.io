@@ -13,29 +13,23 @@ Vue.use(Vuex);
 
 export let store = new Vuex.Store({
   state: {
-      name : "naHyunKee",
-      age : 28,
       postdata : [],
+      userImage : "",
+      userName : "",
       filters : ["normal", "clarendon", "gingham", "moon", "lark", 
       "reyes", "juno", "slumber", "aden", "perpetua", 
       "mayfair", "rise", "hudson", "valencia", "xpro2", 
       "willow", "lofi", "inkwell", "nashville"]
   },
   getters : {
-    getName(state){
-      return state.name;
-    },
-    getAge(state){
-      return state.age;
-    },
-    getPostData(state){
+    async getPostData(state){
       //초기화 해 줘야 됨
       state.postdata = [];
       //version 1 : axios로 ajax 호출
       //ajax 호출로 파이어 베이스 데이터 가져오기는 성공했다.
       //파이어 베이스는 항상 오름차순 정렬이다. 역순의 값을 얻으려면 스크립트 상에서 처리 해줘야한다. 
       //역의 값을 얻으려면 limitToLast 앞에서 순서대로 값을 얻으려면 limitToStart 
-      axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json?orderBy="id"&limitToLast=3')
+      await axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json?orderBy="id"&limitToLast=3')
            .then(result => {                 
             //타이밍이 안맞는 이유는 다음과 같다. put처리 이후 콜백에서 처리를 안해 주어서 그렇다
             //axios호출 이후 반드시 후에 들어오는 로직은 then에서 함수 처리 해주어야 한다. 
@@ -87,16 +81,29 @@ export let store = new Vuex.Store({
            });
       return state.postdata;
     },
+    async getName(state){
+      state.userName = "";
+      var result = await axios.get('https://vuestargram-39e5c.firebaseio.com/userinfo/userName.json');
+      /* eslint-disable */
+      console.log(result.data);
+      state.userName = result.data;
+      return state.userName;
+    },
+    async getImage(state){
+      state.userImage = "";
+      var result = await axios.get('https://vuestargram-39e5c.firebaseio.com/userinfo/userImage.json');
+      /* eslint-disable */
+      console.log(result.data);
+      state.userImage = result.data;
+      return state.userImage;
+    },
     getFilters(state){
       return state.filters;
     }
   },
   mutations: {
-    setAge(state, param){
-      state.age = param;
-    },
     setName(state, param){
-      state.name = param;
+
     }
   },
   //[리액트] => redux 와 동일

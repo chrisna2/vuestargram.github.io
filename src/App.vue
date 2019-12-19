@@ -27,12 +27,13 @@
     <hr>
       <div class="post-header">
         <!-- 속성안에 데이터를 받기 위해서는 " : " 작은 따옴표와 큰 따옴표의 차이가 크게 작용한다.-->
-        <div class='profile' style="background-image: url(https://cdn.clien.net/web/api/file/F01/3045198/f7af4dcda39945eeace.PNG);width:80px;height:80px;" ></div>
-        <span class="profile-name">&nbsp;&nbsp;<b><h3>{{$store.getters.getName}}</h3></b></span>
+        <div class='profile' :style="'background-image: url('+userImage+');width:80px;height:80px;'" ></div>
+        <span class="profile-name">&nbsp;&nbsp;<b><h3>{{userName}}</h3></b></span>
       </div>
       <ul>
-        <li class="modal-list">사진변경 : <input type="file" id="usrfile" class="inputfile" v-on:change="usrmodify"><label class="input-plus" for="usrfile">♻️</label></li>
-        <li class="modal-list">이름변경 : <input class="inputModal" type="text" v-model="nameText"><span class="modal-button" v-on:click="$store.commit('setName', nameText)">변경</span></li>
+        <li class="modal-list">사진변경 : <input type="file" id="usrfile" class="inputfile" v-on:change="usrInfoModify"><label class="input-plus" for="usrfile">♻️</label></li>
+        <!-- v-model="userNameInputval" 이렇게 설정한 변수도 data에 등록해 줘야 한다. -->
+        <li class="modal-list">이름변경 : <input class="inputModal" type="text" v-model="userNameInputval"><span class="modal-button" v-on:click="$store.commit('setName', userNameInputval)">변경</span></li>
       </ul>
     <hr>
   </div>
@@ -102,7 +103,7 @@ export default {
   },
   data() {
     return {
-      postdata : this.$store.getters.getPostData,
+      postdata : [],
       // 상태 변수 설정
       now_tap_num : 0,
       uploadType : "",
@@ -112,7 +113,10 @@ export default {
       modify_data : {},
       filter_list : this.$store.getters.getFilters,
       select_filter : "",
-      open_modal : false
+      open_modal : false,
+      userNameInputval : "",
+      userName : "",
+      userImage : "",
     }
   },
   methods : {
@@ -141,8 +145,8 @@ export default {
       //업로드 데이터 설정
       var upload_data = {
               id : nextId,
-              name: this.$store.getters.getName,
-              userImage: "https://placeimg.com/100/100/arch",
+              name: this.userName,
+              userImage: this.userImage,
               postImage: this.upload_image,
               likes: 36,
               date: 'Dec 16',
@@ -158,6 +162,7 @@ export default {
               console.log(result);
               if(result.status == 200){
                 //2. 메인 페이지로 돌아간다.
+                this.postdata.unshift(upload_data);//현재 app에도 해당 데이터를 반영한다.
                 this.initData();
               }
            })
@@ -203,13 +208,16 @@ export default {
               filter : this.select_filter
       };
       // 2. 업로드한 이미지를 업로드한다. 서버에
-      // this.postdata.unshift(upload_data); 
-      // 입력 처리 된다.
+      // 수정 처리 된다.
       axios.put('https://vuestargram-39e5c.firebaseio.com/postdata/'+this.modify_data.id+'.json', tmp_modify_data)
            .then(result => {
               console.log(result);
               //2. 메인 페이지로 돌아간다.
               this.initData();
+              //클라이언트에 박힌 데이터 수정
+              var idx = this.postdata.findIndex(post => post.id == tmp_modify_data.id);
+              //2. 수정하려는 데이터 update
+              this.postdata[idx] = tmp_modify_data;
             })
            .catch(err => {
               console.log(err);
@@ -228,6 +236,8 @@ export default {
                if(result.status == 200){
                 //3. 메인 페이지로 돌아간다.
                 this.initData();
+                //2. 화면에도 해당 데이터를 날려 준다. 
+                this.postdata.splice(idx, 1);
                }
              })
              .catch(err => {
@@ -281,6 +291,33 @@ export default {
         this.open_modal = false;
       }
       return this.open_modal;
+    },
+    usrInfoModify(e){
+      let file = e.target.files;
+      let reader = new FileReader();
+      reader.readAsDataURL(file[0]); //jpg, png 이미지를 해쉬함수로 문자열로 압축한 것 
+      reader.onload = e => {
+        /* eslint-disable */
+        console.log(e.target.result);
+        // 3. Body.vue에 그 이미지를 올려야 함
+        this.upload_image = e.target.result;
+      }
+      var tmp_modify_data = {
+          userImage : this.upload_image,
+          userName : this.userName
+      };
+      // 2. 업로드한 이미지를 업로드한다. 서버에
+      // this.postdata.unshift(upload_data); 
+      // 입력 처리 된다.
+      axios.put('https://vuestargram-39e5c.firebaseio.com/userInfo.json', tmp_modify_data)
+           .then(result => {
+              console.log(result);
+              //2. 메인 페이지로 돌아간다.
+              this.initData(); 
+            })
+           .catch(err => {
+              console.log(err);
+            });
     }
   },
   mounted(){
@@ -289,12 +326,43 @@ export default {
         console.log(fliter);
         this.select_filter = fliter;
     });
+  },
+  //페이지 첫로드시 데이터 초기화 시킬 함수 -> 페이지 첫로드시 데이터 초기값을 설정해주고 싶을 때
+  created(){
+    //promise를 리턴할 경우 이런식으로 then을 붙여 원하는 데이터가 로딩 될때 까지 기다려야한다. 
+    //promise가 뜨는 이유 : 원하는 데이터가 뜰때 까지 동기적으로 수행된게 아니라 비동기로 먼저 수행된 결과가 나와서 그렇다.
+    //this.$store.getters.getName 이렇게 직접 가져다 쓰면 promise가 뜬다 따라서 데이터를 한번에 호출하고 담아줄 data 변수가 필요하다.
+    this.$store.getters.getPostData.then(data => {
+      this.postdata = data
+    });
+    //this.filter_list = this.$store.getters.getFilters;
+    this.$store.getters.getName.then(data =>{
+      this.userName = data
+    });
+    //this.filter_list = this.$store.getters.getFilters;
+    this.$store.getters.getImage.then(data =>{
+      this.userImage = data
+    });
+  },
+  //데이터가 변경되고 DOM 랜더링 전 -> 데이터가 변경된 직후에 뭔가 동작시킬 때 (깜빡거림이 없다. 아마도?)
+  beforeUpdate(){
+
+  },
+  //데이터가 변경되어 재랜더링 된 이후 -> 데이터가 변경되어 재렌더링된 이후 뭔가 동작시킬 때
+  updated(){
+    //근데 입력한 데이터가 왜 바로 반영되지 않는 걸까?
+    this.$store.getters.getPostData.then(data => {
+      this.postdata = data;
+    });
+    //this.filter_list = this.$store.getters.getFilters;
+    this.$store.getters.getName.then(data => {
+      this.userName = data;
+    });
+    //this.filter_list = this.$store.getters.getFilters;
+    this.$store.getters.getImage.then(data => {
+      this.userImage = data;
+    });
   }
-  // 페이지 첫로드시 데이터 초기화 시킬 함수 -> 페이지 첫로드시 데이터 초기값을 설정해주고 싶을 때
-  // created(){
-  //   this.postdata = this.$store.getters.getPostData;
-  //   this.filter_list = this.$store.getters.getFilters;
-  // }
 }
 </script>
 
