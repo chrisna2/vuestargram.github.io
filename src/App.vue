@@ -31,9 +31,9 @@
         <span class="profile-name">&nbsp;&nbsp;<b><h3>{{userName}}</h3></b></span>
       </div>
       <ul>
-        <li class="modal-list">사진변경 : <input type="file" id="usrfile" class="inputfile" v-on:change="usrInfoModify"><label class="input-plus" for="usrfile">♻️</label></li>
+        <li class="modal-list">사진변경 : <input type="file" id="usrfile" class="inputfile" v-on:change="userImageModify"><label class="input-plus" for="usrfile">♻️</label></li>
         <!-- v-model="userNameInputval" 이렇게 설정한 변수도 data에 등록해 줘야 한다. -->
-        <li class="modal-list">이름변경 : <input class="inputModal" type="text" v-model="userNameInputval"><span class="modal-button" v-on:click="$store.commit('setName', userNameInputval)">변경</span></li>
+        <li class="modal-list">이름변경 : <input class="inputModal" type="text" v-model="userNameInputval"><span class="modal-button" v-on:click="userNameModify(userNameInputval)">변경</span></li>
       </ul>
     <hr>
   </div>
@@ -103,7 +103,7 @@ export default {
   },
   data() {
     return {
-      postdata : [],
+      postdata : this.$store.getters.getPostData,
       // 상태 변수 설정
       now_tap_num : 0,
       uploadType : "",
@@ -115,8 +115,8 @@ export default {
       select_filter : "",
       open_modal : false,
       userNameInputval : "",
-      userName : "",
-      userImage : "",
+      userName : this.$store.getters.getName,
+      userImage : this.$store.getters.getImage,
     }
   },
   methods : {
@@ -162,8 +162,9 @@ export default {
               console.log(result);
               if(result.status == 200){
                 //2. 메인 페이지로 돌아간다.
-                this.postdata.unshift(upload_data);//현재 app에도 해당 데이터를 반영한다.
                 this.initData();
+                this.postdata.unshift(upload_data);//현재 app에도 해당 데이터를 반영한다.
+                this.$store.commit('setPostData', this.postdata);//스토어에 있는 데이터도 같이 처리
               }
            })
            .catch(err => {
@@ -218,6 +219,7 @@ export default {
               var idx = this.postdata.findIndex(post => post.id == tmp_modify_data.id);
               //2. 수정하려는 데이터 update
               this.postdata[idx] = tmp_modify_data;
+              this.$store.commit('setPostData', this.postdata);//스토어에 있는 데이터도 같이 처리
             })
            .catch(err => {
               console.log(err);
@@ -238,6 +240,7 @@ export default {
                 this.initData();
                 //2. 화면에도 해당 데이터를 날려 준다. 
                 this.postdata.splice(idx, 1);
+                this.$store.commit('setPostData', this.postdata);//스토어에 있는 데이터도 같이 처리
                }
              })
              .catch(err => {
@@ -261,7 +264,6 @@ export default {
       if(preId < 0){
         alert("가장 마지막의 포스트입니다.")
       }
-
       //ajax 호출로 파이어 베이스 데이터 가져오기는 성공했다.
       axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json?orderBy=%22id%22&endAt='+preId+'&limitToLast=2&print=pretty')
            .then(result => {
@@ -272,6 +274,7 @@ export default {
                         if(post != null){
                           //각각 배열에 입력처리
                           this.postdata.push(post);  
+                          this.$store.commit('setPostData', this.postdata);//스토어에 있는 데이터도 같이 처리
                         }
                       });
             });
@@ -292,7 +295,7 @@ export default {
       }
       return this.open_modal;
     },
-    usrInfoModify(e){
+    userImageModify(e){
       let file = e.target.files;
       let reader = new FileReader();
       reader.readAsDataURL(file[0]); //jpg, png 이미지를 해쉬함수로 문자열로 압축한 것 
@@ -313,7 +316,28 @@ export default {
            .then(result => {
               console.log(result);
               //2. 메인 페이지로 돌아간다.
-              this.initData(); 
+              this.$store.commit('setImage', this.upload_image);
+              this.initData();
+
+            })
+           .catch(err => {
+              console.log(err);
+            });
+    },
+    userNameModify(param){
+      var tmp_modify_data = {
+          userImage : this.userImage,
+          userName : param
+      };
+      // 2. 업로드한 이미지를 업로드한다. 서버에
+      // this.postdata.unshift(upload_data); 
+      // 입력 처리 된다.
+      axios.put('https://vuestargram-39e5c.firebaseio.com/userInfo.json', tmp_modify_data)
+           .then(result => {
+              console.log(result);
+              //2. 메인 페이지로 돌아간다.
+              this.$store.commit('setName', param);
+              this.initData();
             })
            .catch(err => {
               console.log(err);
@@ -332,36 +356,35 @@ export default {
     //promise를 리턴할 경우 이런식으로 then을 붙여 원하는 데이터가 로딩 될때 까지 기다려야한다. 
     //promise가 뜨는 이유 : 원하는 데이터가 뜰때 까지 동기적으로 수행된게 아니라 비동기로 먼저 수행된 결과가 나와서 그렇다.
     //this.$store.getters.getName 이렇게 직접 가져다 쓰면 promise가 뜬다 따라서 데이터를 한번에 호출하고 담아줄 data 변수가 필요하다.
+    /*
     this.$store.getters.getPostData.then(data => {
       this.postdata = data
     });
-    //this.filter_list = this.$store.getters.getFilters;
     this.$store.getters.getName.then(data =>{
       this.userName = data
     });
-    //this.filter_list = this.$store.getters.getFilters;
     this.$store.getters.getImage.then(data =>{
       this.userImage = data
+    });*/
+    //아래 것도 마찬가지였다. 함수형 프로그래밍 방법을 많이 알야 두어야 할 듯하다.
+    this.$store.dispatch("loadPostData").then(() => {
+      this.postdata = this.$store.getters.getPostData;
     });
-  },
-  //데이터가 변경되고 DOM 랜더링 전 -> 데이터가 변경된 직후에 뭔가 동작시킬 때 (깜빡거림이 없다. 아마도?)
-  beforeUpdate(){
-
+    this.$store.dispatch("loadName").then(() => {
+      this.userName = this.$store.getters.getName;
+    });
+    this.$store.dispatch("loadImage").then(() => {
+      this.userImage = this.$store.getters.getImage;
+    });
   },
   //데이터가 변경되어 재랜더링 된 이후 -> 데이터가 변경되어 재렌더링된 이후 뭔가 동작시킬 때
   updated(){
     //근데 입력한 데이터가 왜 바로 반영되지 않는 걸까?
-    this.$store.getters.getPostData.then(data => {
-      this.postdata = data;
-    });
-    //this.filter_list = this.$store.getters.getFilters;
-    this.$store.getters.getName.then(data => {
-      this.userName = data;
-    });
-    //this.filter_list = this.$store.getters.getFilters;
-    this.$store.getters.getImage.then(data => {
-      this.userImage = data;
-    });
+    //[1] ajax로 통신한 데이터를 실시간을 반영하는 방법 => 현재는 화면에 데이터를 직접 수정반영 
+    //값을 입력할 때먀다 계속 실행함 이거 아닌거 같음!
+    // this.$store.dispatch("loadPostData");
+    // this.$store.dispatch("loadImage");
+    // this.$store.dispatch("loadName");
   }
 }
 </script>
