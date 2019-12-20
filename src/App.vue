@@ -57,8 +57,6 @@
       <div v-if="now_tap_num==0">
         <input type="file" id="file" class="inputfile" v-on:change="upload">
         <label for="file" class="input-plus">➕</label>
-        <hr>
-        <label class="input-plus" v-on:click="moreShow">더보기</label>
       </div>
       <div v-if="now_tap_num==1">
         <input type="file" id="file" class="inputfile" v-on:change="modify">
@@ -257,35 +255,6 @@ export default {
       //모든 데이터 초기화!
       Object.assign(this.$data, this.$options.data.call(this));
     },
-    moreShow(){
-      //이전 아이디 설정
-      var preId = this.postdata[this.postdata.length-1].id - 1;
-
-      if(preId < 0){
-        alert("가장 마지막의 포스트입니다.")
-      }
-      //ajax 호출로 파이어 베이스 데이터 가져오기는 성공했다.
-      axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json?orderBy=%22id%22&endAt='+preId+'&limitToLast=2&print=pretty')
-           .then(result => {
-                console.log("@데이터 형태 : "+JSON.stringify(result.data));
-                Object.values(result.data)
-                      .reverse()
-                      .forEach(post => {
-                        if(post != null){
-                          //각각 배열에 입력처리
-                          this.postdata.push(post);  
-                          this.$store.commit('setPostData', this.postdata);//스토어에 있는 데이터도 같이 처리
-                        }
-                      });
-            });
-      /*post call & try~catch
-      axios.post("경로")
-        .then(result => {
-      })
-        .catch(err =>{
-      });
-      */
-    },
     fnopenmodal(){
       if(this.open_modal == false){
         this.open_modal = true;
@@ -312,7 +281,7 @@ export default {
       // 2. 업로드한 이미지를 업로드한다. 서버에
       // this.postdata.unshift(upload_data); 
       // 입력 처리 된다.
-      axios.put('https://vuestargram-39e5c.firebaseio.com/userInfo.json', tmp_modify_data)
+      axios.put('https://vuestargram-39e5c.firebaseio.com/userinfo.json', tmp_modify_data)
            .then(result => {
               console.log(result);
               //2. 메인 페이지로 돌아간다.
@@ -332,7 +301,7 @@ export default {
       // 2. 업로드한 이미지를 업로드한다. 서버에
       // this.postdata.unshift(upload_data); 
       // 입력 처리 된다.
-      axios.put('https://vuestargram-39e5c.firebaseio.com/userInfo.json', tmp_modify_data)
+      axios.put('https://vuestargram-39e5c.firebaseio.com/userinfo.json', tmp_modify_data)
            .then(result => {
               console.log(result);
               //2. 메인 페이지로 돌아간다.
@@ -342,6 +311,33 @@ export default {
            .catch(err => {
               console.log(err);
             });
+    },
+    //무한 스크롤 구현 + 졸라 간단하다.
+    handleScroll (event) {
+      // Any code to be executed when the window is scrolled
+      //console.log(window.innerHeight+"|"+window.scrollY+"|"+document.body.offsetHeight);
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight-1) {
+          console.log("you're at the bottom of the page");
+          //이전 아이디 설정
+          var preId = this.postdata[this.postdata.length-1].id - 1;
+          if(preId < 0){
+            alert("가장 마지막의 포스트입니다.")
+          }
+          //ajax 호출로 파이어 베이스 데이터 가져오기는 성공했다.
+          axios.get('https://vuestargram-39e5c.firebaseio.com/postdata.json?orderBy=%22id%22&endAt='+preId+'&limitToLast=2&print=pretty')
+               .then(result => {
+                    console.log("@데이터 형태 : "+JSON.stringify(result.data));
+                    Object.values(result.data)
+                          .reverse()
+                          .forEach(post => {
+                            if(post != null){
+                              //각각 배열에 입력처리
+                              this.postdata.push(post);  
+                              this.$store.commit('setPostData', this.postdata);//스토어에 있는 데이터도 같이 처리
+                            }
+                          });
+              });
+      }
     }
   },
   mounted(){
@@ -376,15 +372,18 @@ export default {
     this.$store.dispatch("loadImage").then(() => {
       this.userImage = this.$store.getters.getImage;
     });
+    //스크롤 이벤트 리스너 추가
+    window.addEventListener('scroll', this.handleScroll);
+  },
+  destroyed(){
+    //스크롤 이벤트 리스너 제거
+    window.removeEventListener('scroll', this.handleScroll);
   },
   //데이터가 변경되어 재랜더링 된 이후 -> 데이터가 변경되어 재렌더링된 이후 뭔가 동작시킬 때
   updated(){
     //근데 입력한 데이터가 왜 바로 반영되지 않는 걸까?
     //[1] ajax로 통신한 데이터를 실시간을 반영하는 방법 => 현재는 화면에 데이터를 직접 수정반영 
     //값을 입력할 때먀다 계속 실행함 이거 아닌거 같음!
-    // this.$store.dispatch("loadPostData");
-    // this.$store.dispatch("loadImage");
-    // this.$store.dispatch("loadName");
   }
 }
 </script>
