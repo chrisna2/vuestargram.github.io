@@ -37,7 +37,6 @@
       </ul>
     <hr>
   </div>
-
   <Body 
     v-bind:postdata="postdata" 
     v-bind:now_tap_num="now_tap_num"
@@ -49,9 +48,7 @@
     v-on:shootData="wrote_post=$event"
     v-on:modifyinsta="modifyinsta" 
     v-on:deleteinsta="deleteinsta"/>
-
   <!-- <div class="sample-box">임시 박스</div> -->
-
   <div class="footer">
     <ul class="footer-button-plus">
       <div v-if="now_tap_num==0">
